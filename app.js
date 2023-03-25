@@ -1,10 +1,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const exphbs = require("express-handlebars");
+const app = express();
+app.engine("hbs", exphbs.engine({ defaultLayout: "main", extname: ".hbs" }));
+app.set("view engine", "hbs");
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-
-const app = express();
+app.get("/", (req, res) => {
+  res.render("index");
+});
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
