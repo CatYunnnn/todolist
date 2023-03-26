@@ -19,6 +19,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/todos/new", (req, res) => {
   return res.render("new");
 });
+app.get("/todos/:id", (req, res) => {
+  const id = req.params.id;
+  return Todo.findById(id)
+    .lean()
+    .then((todo) => res.render("detail", { todo }))
+    .catch((error) => console.log(error));
+});
 app.post("/todos", (req, res) => {
   const name = req.body.name;
   console.log(req.body);
@@ -41,9 +48,7 @@ db.on("error", () => {
 db.once("open", () => {
   console.log("mongodb connected!");
 });
-app.get("/", (req, res) => {
-  res.send("hello world!");
-});
+
 app.listen(3000, () => {
   console.log("running running running~");
 });
