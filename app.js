@@ -56,6 +56,13 @@ app.post("/todos/:id/edit", (req, res) => {
     .then(() => res.redirect(`/todos/${id}`))
     .catch((error) => console.log(error));
 });
+app.post("/todos/:id/delete", (req, res) => {
+  const id = req.params.id;
+  return Todo.findById(id)
+    .then((todo) => todo.deleteOne()) //remove()在mongoose5.0以後不支援了
+    .then(() => res.redirect("/"))
+    .catch((error) => console.log(error));
+});
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
