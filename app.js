@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const exphbs = require("express-handlebars");
+const bodyParser = require("body-parser");
 const Todo = require("./models/todo");
 const app = express();
 app.engine("hbs", exphbs.engine({ defaultLayout: "main", extname: ".hbs" }));
@@ -13,6 +14,21 @@ app.get("/", (req, res) => {
     .lean() // 把 Mongoose 的 Model 物件轉換成乾淨的 JavaScript 資料陣列
     .then((todos) => res.render("index", { todos })) // 將資料傳給 index 樣板
     .catch((error) => console.error(error));
+});
+app.use(bodyParser.urlencoded({ extended: true }));
+app.get("/todos/new", (req, res) => {
+  return res.render("new");
+});
+app.post("/todos", (req, res) => {
+  const name = req.body.name;
+  console.log(req.body);
+  const todo = new Todo({
+    name,
+  });
+  return todo
+    .save()
+    .then(() => res.redirect("/"))
+    .catch((error) => console.log(error));
 });
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
