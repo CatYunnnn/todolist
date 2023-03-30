@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const exphbs = require("express-handlebars");
 const bodyParser = require("body-parser");
+const methodOverride = require("method-override");
 const Todo = require("./models/todo");
 const app = express();
 app.engine("hbs", exphbs.engine({ defaultLayout: "main", extname: ".hbs" }));
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
     .catch((error) => console.log(error));
 });
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 app.get("/todos/new", (req, res) => {
   return res.render("new");
 });
@@ -46,7 +48,7 @@ app.post("/todos", (req, res) => {
     .then(() => res.redirect("/"))
     .catch((error) => console.log(error));
 });
-app.post("/todos/:id/edit", (req, res) => {
+app.put("/todos/:id", (req, res) => {
   const id = req.params.id;
   const { name, isDone } = req.body;
   return Todo.findById(id)
@@ -62,7 +64,7 @@ app.post("/todos/:id/edit", (req, res) => {
     .then(() => res.redirect(`/todos/${id}`))
     .catch((error) => console.log(error));
 });
-app.post("/todos/:id/delete", (req, res) => {
+app.delete("/todos/:id", (req, res) => {
   const id = req.params.id;
   return Todo.findById(id)
     .then((todo) => todo.deleteOne()) //remove()在mongoose5.0以後不支援了
